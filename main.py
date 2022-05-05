@@ -60,9 +60,9 @@ def load_account_data():
 
 def save_account_data(account_data):
     file = open(path,'w')
-    file.write(','.join(header) + '\n')
+    file.write(','.join(header))
     for line in account_data:
-        file.write(','.join(str(item) for item in line) + '\n')
+        file.write('\n' + ','.join(str(item) for item in line))
     file.close()
     print('Successfully saved the account data.')
 
