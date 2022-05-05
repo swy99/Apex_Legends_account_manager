@@ -1,10 +1,10 @@
-# Apex_Legend_account_manager
+# Apex Legends account manager
 
 # Description
 - manages Apex Legends account informations in csv file
 
 # CSV file location
-'''
+'''bash
 root/data/account_data.csv
 '''
 
