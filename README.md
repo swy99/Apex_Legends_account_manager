@@ -14,4 +14,4 @@
 - numpy
 - opencv-python
 - pyautogui
-- pytesseract (you must download [addtional program] (https://github.com/UB-Mannheim/tesseract/wiki) for text recognition)
+- [pytesseract] (https://github.com/UB-Mannheim/tesseract/wiki) (you must download an additional program in this link for text recognition)
