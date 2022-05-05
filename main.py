@@ -3,44 +3,74 @@ from Lib.extract_legend import is_legend_page, extract_legend_info, Legends
 import time
 import pyautogui as pag
 import numpy as np
+import os
+import sys
 
 path = './data/account_data.csv'
 header = ["Steam ID","Nickname","Level","Rank"] + Legends
 
-def get_account_info():
-    print("Enter Steam ID: ",end='')
+def get_account_info(account_data):
+    def getlevel(account_data,steamid):
+        print('\nPlease enter LEVEL (leave it empty if unchanged): ',end='')
+        lv = input()
+        if lv == '' or lv == ' ':
+            for acc in account_data:
+                if acc[0] == steamid:
+                    print(acc[2])
+                    return acc[2]
+        return lv
+    def getrank(account_data,steamid):
+        print('\nPlease enter RANK (leave it empty if unchanged): ',end='')
+        rank = input()
+        if rank == '' or rank == ' ':
+            for acc in account_data:
+                if acc[0] == steamid:
+                    print(acc[3])
+                    return acc[3]
+        return rank
+    def showinfo(info):
+        print("===== account info =====")
+        for i in range(4):
+            print(header[i] + ': ' + info[i])
+        print(info[4:])
+    print('Please enter Steam ID: ',end='')
     steamid = input()
-    nickname = get_nickname()[0:-1]
-    level = ''
-    rank = ''
+    for acc in account_data:
+        if acc[0] == steamid:
+            print('\nThis account already exists. The information you will enter will be used to update this account.')
+    nickname = get_nickname()
     legend_info,legend_info_list = get_legend()
-    info = [steamid, nickname, level, rank]+ legend_info_list
-    print(info)
+    level = getlevel(account_data,steamid)
+    rank = getrank(account_data,steamid)
+    info = [steamid, nickname, level, rank] + legend_info_list
+    info[-1] += '\n'
+    showinfo(info)
     return info
 
 def get_nickname():
     def remove_punctuation(string):
-        res = ''
-        for letter in string:
-            if letter.isdigit() or letter.isalpha():
-                res += letter
+        res = string
+        if res[-1] == '\n':
+            res = res[0:-1]
         return res
-    print('Please open your profile page in fullscreen',end='')
+    print('\nPlease open your profile page in fullscreen.',end='',flush=True)
     while True:
         time.sleep(0.1)
         img = np.array(pag.screenshot())
         if is_profile_page(img):
-            print(' (Success)')
-            return remove_punctuation(extract_nickname(img))
+            res = remove_punctuation(extract_nickname(img))
+            print(' (' + res + ')')
+            return res
 
 def get_legend():
-    print('Please open your legend page in fullscreen',end='')
+    print('Please open your legend page in fullscreen.',end='',flush=True)
     while True:
         time.sleep(0.1)
         img = np.array(pag.screenshot())
         if is_legend_page(img):
-            print(' (Success)')
-            return extract_legend_info(img)
+            res = extract_legend_info(img)
+            print(' (success)')
+            return res
 
 def load_account_data():
     account_data = []
@@ -53,18 +83,19 @@ def load_account_data():
                 continue
             account_data.append(line.split(','))
         file.close()
+        print('\nSuccessfully loaded the account data.')
     except FileNotFoundError:
-        pass
+        print('\nAccount data does not exist. A new csv file will be created.')
     return account_data
 
 
 def save_account_data(account_data):
     file = open(path,'w')
-    file.write(','.join(header))
+    file.write(','.join(header) + '\n')
     for line in account_data:
-        file.write('\n' + ','.join(str(item) for item in line))
+        file.write(','.join(str(item) for item in line))
     file.close()
-    print('Successfully saved the account data.')
+    print('\nSuccessfully saved the account data.')
 
 def update(account_data, info):
     for account in account_data:
@@ -82,7 +113,7 @@ def getYorN(msg):
     if inp.lower() == 'n' or inp.lower() == 'no':
         return False
     while True:
-        print('Please answer with \"y\" or \"n\". ' + msg + ' ', end='')
+        print('\nPlease answer with \"y\" or \"n\". ' + msg + ' ', end='')
         inp = input()
         if inp.lower() == 'y' or inp.lower() == 'yes':
             return True
@@ -90,11 +121,19 @@ def getYorN(msg):
             return False
 
 def main():
+    os.system('cls')
     account_data = load_account_data()
-    info = get_account_info()
-    update(account_data, info)
-    if getYorN('Do you want to save this account\'s information?'):
+    info = get_account_info(account_data)
+    account_data = update(account_data, info)
+    if getYorN('\nDo you want to save this account\'s information?'):
         save_account_data(account_data)
+    while getYorN('\nDo you want to add another account?'):
+        os.system('cls')
+        account_data = load_account_data()
+        info = get_account_info(account_data)
+        update(account_data, info)
+        if getYorN('\nDo you want to save this account\'s information?'):
+            save_account_data(account_data)
 
 if __name__=='__main__':
     main()
