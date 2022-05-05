@@ -14,4 +14,4 @@
 - numpy
 - opencv-python
 - pyautogui
-- [pytesseract](https://github.com/UB-Mannheim/tesseract/wiki) (Click this link for text recognition)
+- [pytesseract](https://github.com/UB-Mannheim/tesseract/wiki) ![poster](./pictures/1.png)
