@@ -4,9 +4,7 @@
 - manages Apex Legends account informations in csv file
 
 # CSV file location
-'''bash
-root/data/account_data.csv
-'''
+    root/data/account_data.csv
 
 # Requirements (hardware)
 - fhd or 1080p (1920 x 1080 resolution) single display
